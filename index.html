@@ -2,22 +2,250 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Weather App</title>
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Modern UI</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #4e73df;
+      --secondary: #f8f9fc;
+      --text-dark: #2e2e2e;
+      --text-light: #6c757d;
+      --white: #fff;
+      --sidebar-width: 240px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background-color: var(--secondary);
+      color: var(--text-dark);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100%;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .sidebar a {
+      color: var(--white);
+      text-decoration: none;
+      padding: 12px 0;
+      display: block;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background: var(--white);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar h1 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .navbar input {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      width: 250px;
+    }
+
+    .dashboard {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--white);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        height: auto;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .navbar input {
+        width: 150px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="weather-container">
-    <h1>🌤️ Weather App Forecast</h1>
-    <input type="text" id="cityInput" placeholder="Enter your city name" />
-    <button onclick="getWeather()">Get Weather</button>
-    
-    <div id="weatherResult" class="weather-card">
-      <!-- Weather data will go here -->
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>My Dashboard</h2>
+    <a href="#">🏠 Overview</a>
+    <a href="#">📊 Analytics</a>
+    <a href="#">📅 Schedule</a>
+    <a href="#">⚙️ Settings</a>
+    <a href="#">🚪 Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Top Navbar -->
+    <div class="navbar">
+      <h1>Dashboard</h1>
+      <input type="text" placeholder="Search...">
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="dashboard">
+      <div class="card">
+        <h3>Sales Overview</h3>
+        <canvas id="salesChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>Visitors</h3>
+        <canvas id="visitorsChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>Revenue</h3>
+        <canvas id="revenueChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>Conversion Rate</h3>
+        <canvas id="conversionChart"></canvas>
+      </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Chart Scripts -->
+  <script>
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Sales',
+          data: [120, 190, 300, 500, 200, 300],
+          backgroundColor: 'rgba(78, 115, 223, 0.2)',
+          borderColor: 'rgba(78, 115, 223, 1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    const visitorsCtx = document.getElementById('visitorsChart').getContext('2d');
+    new Chart(visitorsCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Visitors',
+          data: [500, 700, 800, 600, 900, 1200, 1000],
+          backgroundColor: 'rgba(54, 185, 204, 0.8)'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Product A', 'Product B', 'Product C'],
+        datasets: [{
+          data: [300, 150, 200],
+          backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc']
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+
+    const conversionCtx = document.getElementById('conversionChart').getContext('2d');
+    new Chart(conversionCtx, {
+      type: 'radar',
+      data: {
+        labels: ['Landing', 'Signup', 'Checkout', 'Purchase'],
+        datasets: [{
+          label: 'Conversion',
+          data: [90, 70, 60, 80],
+          backgroundColor: 'rgba(231, 74, 59, 0.2)',
+          borderColor: 'rgba(231, 74, 59, 1)',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+  </script>
 </body>
 </html>
